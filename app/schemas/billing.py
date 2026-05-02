@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 from app.models.transaction import TransactionType
@@ -22,6 +23,3 @@ class BalanceOut(BaseModel):
     credits: float
     loyalty_level: str
     discount_percent: float
-
-
-from typing import Optional
