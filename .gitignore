@@ -1,0 +1,27 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# ML artifacts
+ml/artifacts/*.pkl
+ml/artifacts/*.joblib
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Docker
+*.log
