@@ -33,6 +33,11 @@ services:
     ports:
       - "8000:8000"
     env_file: .env
+    environment:
+      # переопределяем DATABASE_URL для работы внутри docker network
+      DATABASE_URL: postgresql://medoc_user:medoc_password@db:5432/medoc_db
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
     depends_on:
       db:
         condition: service_healthy
@@ -45,6 +50,10 @@ services:
     build: .
     command: celery -A app.tasks.celery_app worker --loglevel=info
     env_file: .env
+    environment:
+      DATABASE_URL: postgresql://medoc_user:medoc_password@db:5432/medoc_db
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
     depends_on:
       db:
         condition: service_healthy
@@ -57,6 +66,9 @@ services:
     build: .
     command: celery -A app.tasks.cron_tasks beat --loglevel=info
     env_file: .env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
     depends_on:
       - redis
     volumes:
@@ -68,6 +80,8 @@ services:
     ports:
       - "8501:8501"
     env_file: .env
+    environment:
+      API_URL: http://api:8000/api/v1
     depends_on:
       - api
 
@@ -84,8 +98,10 @@ services:
       - "3000:3000"
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: admin
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
 
 volumes:
